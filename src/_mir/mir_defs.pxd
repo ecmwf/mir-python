@@ -16,7 +16,7 @@ cdef extern from "mir/api/MIRJob.h" namespace "mir::api":
         MIRJob& set(string, int)
         MIRJob& set(string, double)
         MIRJob& set(string, double, double)
-        void execute(MIRInput, MIROutput)
+        void execute(MIRInput, MIROutput) except +
         void json(eckit.JSON&)
 
 cdef extern from "<sstream>" namespace "std" nogil:
@@ -40,6 +40,14 @@ cdef extern from "mir/input/MultiDimensionalGribFileInput.h" namespace "mir::inp
     cdef cppclass MultiDimensionalGribFileInput(MIRInput):
         MultiDimensionalGribFileInput(eckit.PathName, size_t)
 
+cdef extern from "mir/input/GridSpecInput.h" namespace "mir::input":
+    cdef cppclass GridSpecInput(MIRInput):
+        GridSpecInput(string)
+
+cdef extern from "mir/input/GriddefInput.h" namespace "mir::input":
+    cdef cppclass GriddefInput(MIRInput):
+        GriddefInput(eckit.PathName)
+
 cdef extern from "mir/output/MIROutput.h" namespace "mir::output":
     cdef cppclass MIROutput:
         pass
@@ -52,6 +60,10 @@ cdef extern from "mir/output/GribMemoryOutput.h" namespace "mir::output":
     cdef cppclass GribMemoryOutput(MIROutput):
         GribMemoryOutput(void*, size_t)
         size_t length()
+
+cdef extern from "mir/output/EmptyOutput.h" namespace "mir::output":
+    cdef cppclass EmptyOutput(MIROutput):
+        EmptyOutput()
 
 cdef extern from "mir/config/LibMir.h" namespace "mir":
     cdef cppclass LibMir:
