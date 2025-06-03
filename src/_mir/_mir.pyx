@@ -49,7 +49,9 @@ cdef class Args:
         self.argc = len(sys.argv)
         self.argv = <char**> malloc(self.argc * sizeof(char*))
         for i, arg in enumerate(sys.argv):
-            self.argv[i] = arg
+            # NOTE original self.argv[i] = arg started to fail on str-vs-bytes TypeError
+            barg = arg.encode()
+            self.argv[i] = barg
 
     def __dealloc__(self):
         free(self.argv)
