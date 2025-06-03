@@ -22,12 +22,11 @@ on:
 jobs:
   build:
     name: Build macos wheel
-    # TODO enable after all tested
-    # strategy:
-    #   matrix:
-    #     arch_type: [ARM64, X64]
-    # runs-on: [self-hosted, macOS, "${{ matrix.arch_type }}"]
-    runs-on: [self-hosted, macOS, ARM64 ]
+    strategy:
+      matrix:
+        arch_type: [ARM64, X64]
+        python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    runs-on: [self-hosted, macOS, "${{ matrix.arch_type }}"]
     steps:
         # TODO convert this to be matrix-friendly for python versions. Note it's a bit tricky since
         # we'd ideally not reexecute the compile step multiple times, but it
@@ -47,7 +46,7 @@ jobs:
           path: proj
       - run: |
           cd proj
-          PYTHONPATH=$GITHUB_WORKSPACE/ci-utils/wheelmaker/buildscripts ./build_chain.sh
+          PYVERSION=${{ matrix.python_version }} PYTHONPATH=$GITHUB_WORKSPACE/ci-utils/wheelmaker/buildscripts ./build_chain.sh
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}

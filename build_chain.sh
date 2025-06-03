@@ -17,7 +17,8 @@ set -euo pipefail
 
 # prepare python
 rm -rf .venv
-uv venv --python python3.11 .venv
+PYVERSION=${PYVERSION:-3.11}
+uv venv --python python$PYVERSION .venv
 source .venv/bin/activate
 uv pip install --upgrade setuptools build cython twine wheel
 
@@ -33,7 +34,7 @@ fi
 # mir-python prereqs
 # TODO get these from pyproject...
 uv pip install --prerelease=allow $EXTRA_PIP eccodeslib eckitlib mirlib numpy
-PRF=".venv/lib/python3.11/site-packages"
+PRF=".venv/lib/python$PYVERSION/site-packages"
 if [ "$(uname)" == "Darwin" ] ; then L="lib" ; else L="lib64" ; fi
 export MIR_LIB_DIR="$PRF/eckitlib/$L:$PRF/eccodeslib/$L:$PRF/mirlib/$L"
 export MIR_INCLUDE_DIRS="$PRF/eckitlib/include:$PRF/eccodeslib/include:$PRF/mirlib/include"
@@ -42,6 +43,11 @@ export MIR_INCLUDE_DIRS="$PRF/eckitlib/include:$PRF/eccodeslib/include:$PRF/mirl
 rm -rf build dist
 PYTHONPATH=/buildscripts python -m build --no-isolation --wheel .
 
+# test
+uv pip install pytest pyyaml
+uv pip install ./dist/*
+pytest tests/
+
 # upload
 twine check dist/*whl
-twine upload --verbose dist/*whl
+twine upload --verbose --skip-existing dist/*whl

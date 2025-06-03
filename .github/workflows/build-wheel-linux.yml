@@ -22,6 +22,10 @@ on:
 jobs:
   build:
     name: Build manylinux_2_28
+    strategy:
+      fail-fast: true
+      matrix:
+        python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     runs-on: [self-hosted, Linux, platform-builder-Rocky-8.6]
     # TODO which manylinux do we want to build for? 2014? 2_28? 2_34? Matrix?
     container:
@@ -34,7 +38,7 @@ jobs:
         # we'd ideally not reexecute the compile step multiple times, but it
         # (non-essentially) depends on a matrix-based step
       - uses: actions/checkout@v4
-      - run: ./build_chain.sh
+      - run: PYVERSION=${{ matrix.python_version }} ./build_chain.sh
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
