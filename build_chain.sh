@@ -43,6 +43,11 @@ export MIR_INCLUDE_DIRS="$PRF/eckitlib/include:$PRF/eccodeslib/include:$PRF/mirl
 rm -rf build dist
 PYTHONPATH=/buildscripts python -m build --no-isolation --wheel .
 
+# test
+uv pip install pytest pyyaml
+uv pip install ./dist/*
+pytest tests/
+
 # upload
 twine check dist/*whl
 twine upload --verbose --skip-existing dist/*whl
