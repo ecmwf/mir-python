@@ -9,6 +9,7 @@
 
 from cython.operator cimport dereference
 from libc.stdlib cimport malloc, free
+from libc.string cimport strdup
 from libcpp.string cimport string
 
 cimport eckit_defs as eckit
@@ -33,8 +34,12 @@ cdef class Args:
 
         self.argc = len(sys.argv)
         self.argv = <char**> malloc(self.argc * sizeof(char*))
+        if not self.argv:
+            raise MemoryError("Args: failed to allocate argv")
+
         for i, arg in enumerate(sys.argv):
-            self.argv[i] = arg
+            arg_str = arg.encode()
+            self.argv[i] = strdup(arg_str)
     
     def __dealloc__(self):
         free(self.argv)
