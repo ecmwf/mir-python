@@ -1,4 +1,4 @@
-** ⚠️ THIS PROJECT IS DISCONTINUED ⚠️ **
+⚠️ THIS PROJECT IS DISCONTINUED ⚠️
 
 Python bindings now live inside the MIR package @ https://github.com/ecmwf/mir
 
